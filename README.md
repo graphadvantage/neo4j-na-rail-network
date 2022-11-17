@@ -10,10 +10,6 @@ Two networks are projected - the main lines network and the double stack network
 
 The graph is composed of nodes and routes loaded from geojson formatted files. The load script refactors the route nodes into relationships and also extracts the yards, owners and networks as entities for use as NeoDash parameters.
 
-Download [North_American_Rail_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
-
-Download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
-
 The NARN data dictionary is included in these repo for reference.
 
 #### PreReqs
@@ -22,22 +18,31 @@ The NARN data dictionary is included in these repo for reference.
 
 1. Install Neo4j Enterprise Edition 5.1
 
-1. Install APOC plugin
+1. Install APOC plugin from the Desktop
 
-1. Install GDS plugin
+1. Install GDS plugin from the Desktop
+
+1. Open database settings (DBMS /conf `neo4j.conf`):
+
+  * uncomment `server.directories.import=import`
+
+  * configure `server.memory.heap.initial_size=6g`
+
+  * configure `server.memory.heap.max_size=6g`
+
+  * configure `server.memory.pagecache.size=2g`
+
+1. Open the DBMS folder, copy the `apoc.conf` file to /conf
 
 
 #### Build (for Neo4j 5)
 
+1. download and copy data files to DBMS /import folder
 
-1. in `neo4j.conf` settings:
+  * Download [North_American_Rail_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
 
- uncomment `server.directories.import=import`
- set
+  * Download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
 
-1. copy the `apoc.conf` file to /conf
-
-1. copy data files to /import
 
 1. run the queries in `load.cyp`
 
