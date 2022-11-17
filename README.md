@@ -16,13 +16,13 @@ The NARN data dictionary is included in the repo for reference.
 
 1. [Neo4j Desktop](https://neo4j.com/download)
 
-1. Install Neo4j Enterprise Edition 5.1
+2. Install Neo4j Enterprise Edition 5.1
 
-1. Install APOC plugin from the Desktop
+3. Install APOC plugin from the Desktop
 
-1. Install GDS plugin from the Desktop
+4. Install GDS plugin from the Desktop
 
-1. Open database settings (DBMS /conf `neo4j.conf`):
+5. Open database settings (DBMS /conf `neo4j.conf`):
 
   uncomment `server.directories.import=import`
 
@@ -32,9 +32,9 @@ The NARN data dictionary is included in the repo for reference.
 
   configure `server.memory.pagecache.size=2g`
 
-1. Open the DBMS folder, copy the `apoc.conf` file to /conf
+6. Open the DBMS folder, copy the `apoc.conf` file to /conf
 
-1. Restart Neo4j
+7. Restart Neo4j
 
 #### Build (for Neo4j 5)
 
@@ -44,9 +44,9 @@ The NARN data dictionary is included in the repo for reference.
 
   Download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
 
-1. run the queries in `load.cyp`
+2. run the queries in `load.cyp`
 
-1. open NeoDash (latest) and import `dashboard.json`
+3. open NeoDash (latest) and import `dashboard.json`
 
 Final database size will be ~600MB.
 
