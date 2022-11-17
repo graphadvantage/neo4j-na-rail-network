@@ -16,10 +16,24 @@ Download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usd
 
 The NARN data dictionary is included in these repo for reference.
 
+#### PreReqs
+
+1. [Neo4j Desktop](https://neo4j.com/download)
+
+1. Install Neo4j Enterprise Edition 5.1
+
+1. Install APOC plugin
+
+1. Install GDS plugin
+
+
 #### Build (for Neo4j 5)
 
 
-1. in `neo4j.conf` settings uncomment `server.directories.import=import`
+1. in `neo4j.conf` settings:
+
+ uncomment `server.directories.import=import`
+ set
 
 1. copy the `apoc.conf` file to /conf
 
