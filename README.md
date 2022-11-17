@@ -24,13 +24,13 @@ The NARN data dictionary is included in the repo for reference.
 
 5. Open database settings (DBMS /conf `neo4j.conf`):
 
-  uncomment `server.directories.import=import`
+  * uncomment `server.directories.import=import`
 
-  configure `server.memory.heap.initial_size=6g`
+  * configure `server.memory.heap.initial_size=6g`
 
-  configure `server.memory.heap.max_size=6g`
+  * configure `server.memory.heap.max_size=6g`
 
-  configure `server.memory.pagecache.size=2g`
+  * configure `server.memory.pagecache.size=2g`
 
 6. Open the DBMS folder, copy the `apoc.conf` file to /conf
 
@@ -38,15 +38,15 @@ The NARN data dictionary is included in the repo for reference.
 
 #### Build (for Neo4j 5)
 
-1. download and copy data files to DBMS /import folder
+1. Download and copy data files to DBMS /import folder
 
-  Download [North_American_Rail_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
+  * download [North_American_Rail_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
 
-  Download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
+  * download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
 
-2. run the queries in `load.cyp`
+2. Run the queries in `load.cyp`
 
-3. open NeoDash (latest) and import `dashboard.json`
+3. Open NeoDash (latest) and import `dashboard.json`
 
 Final database size will be ~600MB.
 
