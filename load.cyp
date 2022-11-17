@@ -1,19 +1,25 @@
-//data loading scripts
-//CALL apoc.load.json("nodesNA_test.geojson")
-//CALL apoc.load.json('routesNA_test.geojson')
+//NARN graph data loading scripts
 
-NARN data dictonary values (Node.net)
-A	Abandoned
-F	Ferry
-I	Major industrial lead
-M	Main lead
-O	Non-Mainline Active track
-R	Abandoned line that has been physically removed
-S	Passing sidings
-T	Trail on former rail right-of-way
-X	Out of Service
-Y	Yard Tracks
-Z	Tourist, museum, or science passenger service
+// If you want to look at the geojson data you can use these test files:
+//CALL apoc.load.json("nodesNA_test.geojson") YIELD value RETURN value
+//CALL apoc.load.json('routesNA_test.geojson') YIELD value RETURN value
+
+// NARN data dictonary values (Node.net)
+// A	Abandoned
+// F	Ferry
+// I	Major industrial lead
+// M	Main lead
+// O	Non-Mainline Active track
+// R	Abandoned line that has been physically removed
+// S	Passing sidings
+// T	Trail on former rail right-of-way
+// X	Out of Service
+// Y	Yard Tracks
+// Z	Tourist, museum, or science passenger service
+
+// Set uniqueness constraints for geojson data
+CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.objectid IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (n:Route) REQUIRE n.objectid IS UNIQUE;
 
 //load nodes
 CALL apoc.periodic.iterate(
@@ -175,6 +181,9 @@ WITH apoc.convert.toSet(apoc.coll.flatten(COLLECT(y.rrowners))) AS owners
 UNWIND owners AS owner
 MERGE (n:Owner {rrowner: owner});
 
+//Searchable index for NeoDash
+CREATE TEXT INDEX FOR (n:Owner) ON n.rrowner;
+
 //Set Yard centroid for plotting by first computing midpoints for yard routes
 MATCH (y:Yard)<-[:HAS_YARD]-(n:Node)-[r:CONNECTS]-()
 WHERE y.yardname = r.yardname
@@ -203,20 +212,13 @@ RETURN rel
 ",{iterateList:true, batchSize: 1000}) YIELD batches, total
 RETURN batches, total;
 
-//Add gds projections as nodes for NeoDash parameters
-CALL gds.graph.list() YIELD graphName
-WITH COLLECT(graphName) as graphs
-UNWIND graphs as graphName
-MERGE (n:Network {network: graphName});
-
-
 //** DANGER ZONE ** The DS Network seems like it has missing data, here we are inferring from network neighbors to complete the paths
 // Missing DS segments on main lines
 MATCH path = (n:Node)-[:CONNECTS_DS]-(n1:Node)-[r:CONNECTS]-(n2:Node)-[:CONNECTS_DS]-(n3)
 WHERE  NOT (n1)-[:CONNECTS_DS]-(n2) AND NOT (n:Yard OR n1:Yard OR n2:Yard OR n3:Yard)
 WITH n1,n2,r
 MERGE (n1)-[c:CONNECTS_DS]->(n2)
-SET c+=r, c.imRtType = "DS-INFERRED"
+SET c+=r, c.imRtType = "DS-INFERRED";
 
 //** DANGER ZONE ** The DS Network seems like it has missing data, here we are inferring from network neighbors to complete the paths
 // Missing DS segments near Yards
@@ -224,4 +226,40 @@ MATCH path = (n:Node)-[:CONNECTS_DS]-(n1:Node)-[r:CONNECTS]-(n2:Node)-[:CONNECTS
 WHERE (n:Yard OR n1:Yard OR n2:Yard OR n3:Yard) AND NOT (n1)-[:CONNECTS_DS]-(n2)
 WITH n1,n2,r
 MERGE (n1)-[c:CONNECTS_DS]->(n2)
-SET c+=r, c.imRtType = "DS-INFERRED"
+SET c+=r, c.imRtType = "DS-INFERRED";
+
+//***This is the end of the graph refactoring***
+
+//Project main lines rail network
+CALL gds.graph.project('main-lines-network', 'Node', {
+  relType: {
+    type: 'CONNECTS_MIO',
+    orientation: 'UNDIRECTED',
+    properties: {
+      miles: {
+        property: 'miles',
+        defaultValue: 1
+      }
+    }
+  }
+}, {});
+
+//Project double stack rail network
+CALL gds.graph.project('double-stack-network', 'Node', {
+  relType: {
+    type: 'CONNECTS_DS',
+    orientation: 'UNDIRECTED',
+    properties: {
+      miles: {
+        property: 'miles',
+        defaultValue: 1
+      }
+    }
+  }
+}, {});
+
+//Add gds projections as nodes for NeoDash parameters
+CALL gds.graph.list() YIELD graphName
+WITH COLLECT(graphName) as graphs
+UNWIND graphs as graphName
+MERGE (n:Network {network: graphName});
