@@ -34,6 +34,7 @@ The NARN data dictionary is included in these repo for reference.
 
 1. Open the DBMS folder, copy the `apoc.conf` file to /conf
 
+1. Restart Neo4j
 
 #### Build (for Neo4j 5)
 
