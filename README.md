@@ -6,11 +6,11 @@
 
 A small Neo4j Graph Data Science demo of shortest path route finding between railroad yards in the North American Rail Network (NARN).
 
-Two networks are projected - the main lines network and the double stack network (for tall intermodal cars with double-stacked shipping containers). The double stack network avoid low bridges and tunnels that can only accommodate regular height trains.
+Two networks are projected - the main lines network and the double stack network (for tall intermodal cars with double-stacked shipping containers). The double stack network avoids low bridges and tunnels that can only accommodate regular height trains.
 
 The graph is composed of nodes and routes loaded from geojson formatted files. The load script refactors the route nodes into relationships and also extracts the yards, owners and networks as entities for use as NeoDash parameters.
 
-The NARN data dictionary is included in these repo for reference.
+The NARN data dictionary is included in the repo for reference.
 
 #### PreReqs
 
@@ -58,7 +58,8 @@ If you don't like this behavior, you can always comment out the `apoc.initialize
 #### NeoDash
 
 The dashboard includes several reports.  Try using the 'main-lines-network' and 'TOLEDO MEGA TERMINAL - OH' and 'GENTILLY - LA' for start and end yards.
-You can use 'NS' as the railroad owner. Also try the 'double-stack-network' to see longer, more expensve routes with different trackage ownerships.
+
+You can use 'NS' (Norfolk Southern) as the railroad owner. Also try the 'double-stack-network' to see longer, more expensive routes with different trackage ownerships.
 
 NeoDash:
 
