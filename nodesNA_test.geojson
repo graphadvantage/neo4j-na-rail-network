@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "name": "North_American_Rail_Nodes",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1,
+        "FRANODEID": 300000,
+        "COUNTRY": "US",
+        "STATE": "HI",
+        "STFIPS": "15",
+        "CTYFIPS": "009",
+        "STCYFIPS": "15009",
+        "FRADISTRCT": 7,
+        "PASSNGR": " ",
+        "PASSNGRSTN": " ",
+        "BNDRY": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -156.689726458999985,
+          20.936530277000031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 2,
+        "FRANODEID": 300001,
+        "COUNTRY": "US",
+        "STATE": "HI",
+        "STFIPS": "15",
+        "CTYFIPS": "009",
+        "STCYFIPS": "15009",
+        "FRADISTRCT": 7,
+        "PASSNGR": " ",
+        "PASSNGRSTN": " ",
+        "BNDRY": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -156.689723934999961,
+          20.939155102000029
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 3,
+        "FRANODEID": 300002,
+        "COUNTRY": "US",
+        "STATE": "HI",
+        "STFIPS": "15",
+        "CTYFIPS": "009",
+        "STCYFIPS": "15009",
+        "FRADISTRCT": 7,
+        "PASSNGR": " ",
+        "PASSNGRSTN": " ",
+        "BNDRY": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -156.679320950999966,
+          20.880144534000067
+        ]
+      }
+    }
+  ]
+}

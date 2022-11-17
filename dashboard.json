@@ -1,0 +1,200 @@
+{
+  "title": "North America Rail Lines Graph Demo",
+  "version": "2.2",
+  "settings": {
+    "pagenumber": 0,
+    "editable": false,
+    "fullscreenEnabled": true,
+    "parameters": {
+      "neodash_owner_rrowner": "NS",
+      "neodash_ds_yardname_2": "GENTILLY",
+      "neodash_network_network": "main-lines-network",
+      "neodash_yard_yardname_1": "TOLEDO MEGA TERMINAL",
+      "neodash_yard_yardnamestateab_2": "GENTILLY - LA",
+      "neodash_yard_yardnamestateab_1": "TOLEDO MEGA TERMINAL - OH"
+    },
+    "disableRowLimiting": true,
+    "downloadImageEnabled": true
+  },
+  "pages": [
+    {
+      "title": "Shortest Path and Trackage",
+      "reports": [
+        {
+          "title": "Shortest Path Analysis (cost variable: miles)",
+          "query": "MATCH (start:Yard {yardnamestateab: $neodash_yard_yardnamestateab_1}),(end:Yard {yardnamestateab: $neodash_yard_yardnamestateab_2})\nCALL gds.shortestPath.dijkstra.stream($neodash_network_network, {relationshipWeightProperty: 'miles', sourceNode: id(start), targetNode: id(end)}) YIELD path\nRETURN path\n",
+          "width": 9,
+          "height": 4,
+          "x": 0,
+          "y": 0,
+          "type": "map",
+          "selection": {
+            "Node": "(no label)",
+            "Yard": "(no label)"
+          },
+          "settings": {
+            "defaultNodeSize": "small",
+            "nodeColorScheme": "set1",
+            "nodePositions": {},
+            "hideSelections": true,
+            "autorun": true,
+            "defaultRelColor": "#FF7500"
+          }
+        },
+        {
+          "title": "Start Yard",
+          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 9,
+          "y": 1,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "id": "1",
+            "clearParameterOnFieldClear": true,
+            "entityType": "Yard",
+            "deduplicateSuggestions": false,
+            "propertyType": "yardnamestateab",
+            "parameterName": "neodash_yard_yardnamestateab_1"
+          }
+        },
+        {
+          "title": "End Yard",
+          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 9,
+          "y": 2,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "Yard",
+            "id": "2",
+            "clearParameterOnFieldClear": true,
+            "deduplicateSuggestions": false,
+            "propertyType": "yardnamestateab",
+            "parameterName": "neodash_yard_yardnamestateab_2"
+          }
+        },
+        {
+          "title": "Shortest Path (Miles)",
+          "query": "MATCH (start:Yard {yardnamestateab: $neodash_yard_yardnamestateab_1}),\n(end:Yard {yardnamestateab: $neodash_yard_yardnamestateab_2})\nCALL gds.shortestPath.dijkstra.stream($neodash_network_network, {relationshipWeightProperty: 'miles', sourceNode: id(start), targetNode: id(end)}) YIELD totalCost AS total_cost\nRETURN round(total_cost,1) AS Miles\n\n\n",
+          "width": 3,
+          "height": 1,
+          "x": 9,
+          "y": 3,
+          "type": "value",
+          "selection": {},
+          "settings": {}
+        },
+        {
+          "title": "Trackage on Route",
+          "query": "MATCH (start:Yard {yardnamestateab: $neodash_yard_yardnamestateab_1}),\n(end:Yard {yardnamestateab: $neodash_yard_yardnamestateab_2})\nCALL gds.shortestPath.dijkstra.stream($neodash_network_network, {relationshipWeightProperty: 'miles', sourceNode: id(start), targetNode: id(end)}) YIELD nodeIds, totalCost\nWITH  nodeIds, size(nodeIds) AS total_routes, totalCost AS total_cost ORDER BY total_cost LIMIT 1\nUNWIND range(0, size(nodeIds)-2) AS index\nWITH total_routes, total_cost, gds.util.asNode(nodeIds[index]) AS n1, gds.util.asNode(nodeIds[index+1]) AS n2\nMATCH (n1)-[c:CONNECTS]-(n2) WHERE c.rrowner1=$neodash_owner_rrowner  OR c.rrowner2=$neodash_owner_rrowner  OR c.rrowner3=$neodash_owner_rrowner \nWITH total_routes, total_cost, CASE WHEN c.miles IS NULL THEN 0 ELSE c.miles END AS owner_miles\nWITH total_routes, total_cost, SUM(owner_miles) AS owner_cost\nUNWIND [[$neodash_owner_rrowner,owner_cost], ['Other',total_cost-owner_cost]] AS trackage\nRETURN trackage[0] AS Owner, round(trackage[1]) AS Miles\n\n\n",
+          "width": 3,
+          "height": 2,
+          "x": 9,
+          "y": 5,
+          "type": "pie",
+          "selection": {
+            "index": "Owner",
+            "value": "Miles",
+            "key": "(none)"
+          },
+          "settings": {}
+        },
+        {
+          "title": "Rail Road Owner",
+          "query": "MATCH (n:`Owner`) \nWHERE toLower(toString(n.`rrowner`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`rrowner` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 9,
+          "y": 4,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "Owner",
+            "propertyType": "rrowner",
+            "parameterName": "neodash_owner_rrowner",
+            "clearParameterOnFieldClear": true
+          }
+        },
+        {
+          "title": "Trackage Table",
+          "query": "MATCH (start:Yard {yardnamestateab: $neodash_yard_yardnamestateab_1}),(end:Yard {yardnamestateab: $neodash_yard_yardnamestateab_2})\nCALL gds.shortestPath.dijkstra.stream($neodash_network_network, {relationshipWeightProperty: 'miles', sourceNode: id(start), targetNode: id(end)}) YIELD nodeIds, costs, totalCost\nWITH  nodeIds, size(nodeIds) AS total_routes, totalCost AS total_cost ORDER BY total_cost LIMIT 1\nUNWIND range(0, size(nodeIds)-2) AS index\nWITH total_routes, total_cost, gds.util.asNode(nodeIds[index]) AS n1, gds.util.asNode(nodeIds[index+1]) AS n2\nMATCH (n1)-[c:CONNECTS]-(n2) \nWITH c.rrowner1 AS Owner, total_cost, sum(c.miles) AS owner_cost\nWITH Owner, total_cost, owner_cost WHERE Owner IS NOT NULL\nRETURN Owner,  round(owner_cost,1) AS Owner_Trackage, round(total_cost,1) AS Route_Trackage, ROUND((owner_cost*1.0/total_cost)*100,1) AS Percent ORDER BY Percent DESC\n\n",
+          "width": 9,
+          "height": 3,
+          "x": 0,
+          "y": 4,
+          "type": "table",
+          "selection": {},
+          "settings": {}
+        },
+        {
+          "title": "Network",
+          "query": "MATCH (n:`Network`) \nWHERE toLower(toString(n.`network`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`network` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 9,
+          "y": 0,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "Network",
+            "propertyType": "network",
+            "parameterName": "neodash_network_network",
+            "clearParameterOnFieldClear": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Transit Yards",
+      "reports": [
+        {
+          "title": "Shortest Path Yards",
+          "query": "MATCH (start:Yard {yardnamestateab: $neodash_yard_yardnamestateab_1}),(end:Yard {yardnamestateab: $neodash_yard_yardnamestateab_2})\nCALL gds.shortestPath.dijkstra.stream($neodash_network_network, {relationshipWeightProperty: 'miles', sourceNode: id(start), targetNode: id(end)}) YIELD nodeIds\nWITH nodeIds\nUNWIND range(0, size(nodeIds)-1) AS index\nWITH gds.util.asNode(nodeIds[index]) AS node\nWHERE node:Yard\nRETURN node\n\n",
+          "width": 7,
+          "height": 4,
+          "x": 0,
+          "y": 0,
+          "type": "map",
+          "selection": {
+            "Node": "(no label)",
+            "Yard": "(no label)"
+          },
+          "settings": {
+            "nodeColorScheme": "set1",
+            "defaultNodeSize": "small",
+            "hideSelections": true
+          }
+        },
+        {
+          "title": "",
+          "query": "MATCH (n:`Network`) \nWHERE toLower(toString(n.`network`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`network` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 2,
+          "x": 7,
+          "y": 0,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "Network",
+            "propertyType": "network",
+            "parameterName": "neodash_network_network"
+          }
+        }
+      ]
+    }
+  ],
+  "parameters": {},
+  "extensions": {
+    "advanced-charts": true,
+    "styling": true
+  }
+}
