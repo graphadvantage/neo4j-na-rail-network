@@ -46,9 +46,9 @@ UNWIND value.features AS m
 RETURN m
 ","
 WITH
-head(head(m.geometry.coordinates)) AS start,
-last(last(m.geometry.coordinates)) AS end,
-reduce(p =[], i IN apoc.coll.flatten(m.geometry.coordinates) | p + [point({latitude: i[1], longitude: i[0]})]) AS polyline,
+head(m.geometry.coordinates) AS start,
+last(m.geometry.coordinates) AS end,
+reduce(p =[], i IN m.geometry.coordinates | p + [point({latitude: i[1], longitude: i[0]})]) AS polyline,
 apoc.map.clean(m.properties,[],[' ']) AS map
 WITH start, end, polyline, map, keys(map) AS keys
 WITH start, end, polyline, reduce(m = {}, k IN keys | apoc.map.setValues(m,[apoc.text.camelCase(k),map[k]])) AS map
