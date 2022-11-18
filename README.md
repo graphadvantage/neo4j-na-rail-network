@@ -38,11 +38,11 @@ The NARN data dictionary is included in the repo for reference.
 
 #### Build (for Neo4j 5)
 
-1. Download and copy data files to DBMS /import folder
+1. Download and copy data files to DBMS /import folder.  Pick the GeoJSON option, and within Download Options, pick the "Download file previously generated" option.
 
-  * download [North_American_Rail_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
+  * download [North_American_Rail_Network_Nodes.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-nodes/explore)
 
-  * download [North_American_Rail_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
+  * download [North_American_Rail_Network_Lines.geojson](https://hub.arcgis.com/datasets/usdot::north-american-rail-network-lines/explore)
 
 2. Run the queries in `load.cyp`
 

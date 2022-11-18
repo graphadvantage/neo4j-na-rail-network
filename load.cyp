@@ -24,10 +24,10 @@ CREATE CONSTRAINT IF NOT EXISTS FOR (n:Route) REQUIRE n.objectid IS UNIQUE;
 //load nodes
 CALL apoc.periodic.iterate(
 "
-CALL apoc.load.json('North_American_Rail_Nodes.geojson') YIELD value
-RETURN value
+CALL apoc.load.json('North_American_Rail_Network_Nodes.geojson') YIELD value
+UNWIND value.features AS m
+RETURN m
 ","
-UNWIND value.features as m
 WITH m.geometry.coordinates AS point,
 apoc.map.clean(m.properties,[],[' ']) AS map
 WITH point, map, keys(map) AS keys
@@ -35,16 +35,16 @@ WITH point, reduce(m = {}, k IN keys | apoc.map.setValues(m,[apoc.text.camelCase
 CREATE (n:Node {objectid: map.objectid})
 SET n+=map,
 n.nodepoint = point({latitude: point[1], longitude: point[0]})
-",{batchSize: 1000, parallel:true}) YIELD batches, total
+",{iterateList:true, batchSize: 1000, parallel:true}) YIELD batches, total
 RETURN batches, total;
 
 //load routes
 CALL apoc.periodic.iterate(
 "
-CALL apoc.load.json('North_American_Rail_Lines.geojson') YIELD value
-RETURN value
-","
+CALL apoc.load.json('North_American_Rail_Network_Lines.geojson') YIELD value
 UNWIND value.features AS m
+RETURN m
+","
 WITH
 head(head(m.geometry.coordinates)) AS start,
 last(last(m.geometry.coordinates)) AS end,
@@ -57,7 +57,7 @@ SET n+=map,
 n.startpoint = point({latitude: start[1], longitude: start[0]}),
 n.endpoint = point({latitude: end[1], longitude: end[0]}),
 n.polyline = polyline
-",{batchSize: 1000, parallel:true}) YIELD batches, total
+",{iterateList:true, batchSize: 1000, parallel:true}) YIELD batches, total
 RETURN batches, total;
 
 //Set an index to speed node search
