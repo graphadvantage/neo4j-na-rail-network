@@ -24,7 +24,7 @@ CREATE CONSTRAINT IF NOT EXISTS FOR (n:Route) REQUIRE n.objectid IS UNIQUE;
 //load nodes
 CALL apoc.periodic.iterate(
 "
-CALL apoc.load.json('North_American_Rail_Network_Nodes.geojson') YIELD value
+CALL apoc.load.json('file:///[PATH_TO]/North_American_Rail_Network_Nodes.geojson') YIELD value
 UNWIND value.features AS m
 RETURN m
 ","
@@ -41,14 +41,14 @@ RETURN batches, total;
 //load routes
 CALL apoc.periodic.iterate(
 "
-CALL apoc.load.json('North_American_Rail_Network_Lines.geojson') YIELD value
+CALL apoc.load.json('file:///[PATH_TO]/North_American_Rail_Network_Lines.geojson') YIELD value
 UNWIND value.features AS m
 RETURN m
 ","
 WITH
-head(m.geometry.coordinates) AS start,
-last(m.geometry.coordinates) AS end,
-reduce(p =[], i IN m.geometry.coordinates | p + [point({latitude: i[1], longitude: i[0]})]) AS polyline,
+head(m.geometry.coordinates[0]) AS start,
+last(m.geometry.coordinates[0]) AS end,
+reduce(p =[], i IN m.geometry.coordinates[0] | p + [point({latitude: i[1], longitude: i[0]})]) AS polyline,
 apoc.map.clean(m.properties,[],[' ']) AS map
 WITH start, end, polyline, map, keys(map) AS keys
 WITH start, end, polyline, reduce(m = {}, k IN keys | apoc.map.setValues(m,[apoc.text.camelCase(k),map[k]])) AS map
@@ -130,7 +130,7 @@ AND c.net IN ['M','I','O']
 AND NOT EXISTS((n1)-[:CONNECTS_MIO]-(n2))
 RETURN n1,c,n2
 ","
-MERGE (n1)-[c1:CONNECTS_MIO {fraarcid: c.fraarcid}]->(n2)
+MERGE (n1)-[c1:CONNECTS_MIO {fraarcid: c.fraarcid}]-(n2)
 SET c1+=c
 ",{iterateList:true, batchSize: 1000}) YIELD batches, total
 RETURN batches, total;
@@ -143,7 +143,7 @@ WHERE c.imRtType = 'DS'
 AND NOT EXISTS((n1)-[:CONNECTS_DS]-(n2))
 RETURN n1,c,n2
 ","
-MERGE (n1)-[c1:CONNECTS_DS {fraarcid: c.fraarcid}]->(n2)
+MERGE (n1)-[c1:CONNECTS_DS {fraarcid: c.fraarcid}]-(n2)
 SET c1+=c
 ",{iterateList:true, batchSize: 1000}) YIELD batches, total
 RETURN batches, total;
@@ -212,12 +212,13 @@ RETURN rel
 ",{iterateList:true, batchSize: 1000}) YIELD batches, total
 RETURN batches, total;
 
+// Optional
 //** DANGER ZONE ** The DS Network seems like it has missing data, here we are inferring from network neighbors to complete the paths
 // Missing DS segments on main lines
 MATCH path = (n:Node)-[:CONNECTS_DS]-(n1:Node)-[r:CONNECTS]-(n2:Node)-[:CONNECTS_DS]-(n3)
 WHERE  NOT (n1)-[:CONNECTS_DS]-(n2) AND NOT (n:Yard OR n1:Yard OR n2:Yard OR n3:Yard)
 WITH n1,n2,r
-MERGE (n1)-[c:CONNECTS_DS]->(n2)
+MERGE (n1)-[c:CONNECTS_DS]-(n2)
 SET c+=r, c.imRtType = "DS-INFERRED";
 
 //** DANGER ZONE ** The DS Network seems like it has missing data, here we are inferring from network neighbors to complete the paths
@@ -225,7 +226,7 @@ SET c+=r, c.imRtType = "DS-INFERRED";
 MATCH path = (n:Node)-[:CONNECTS_DS]-(n1:Node)-[r:CONNECTS]-(n2:Node)-[:CONNECTS_DS]-(n3)
 WHERE (n:Yard OR n1:Yard OR n2:Yard OR n3:Yard) AND NOT (n1)-[:CONNECTS_DS]-(n2)
 WITH n1,n2,r
-MERGE (n1)-[c:CONNECTS_DS]->(n2)
+MERGE (n1)-[c:CONNECTS_DS]-(n2)
 SET c+=r, c.imRtType = "DS-INFERRED";
 
 //***This is the end of the graph refactoring***

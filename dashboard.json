@@ -1,20 +1,23 @@
 {
   "title": "North America Rail Lines Graph Demo",
-  "version": "2.2",
+  "version": "2.3",
   "settings": {
     "pagenumber": 0,
-    "editable": false,
+    "editable": true,
     "fullscreenEnabled": true,
     "parameters": {
       "neodash_owner_rrowner": "NS",
       "neodash_ds_yardname_2": "GENTILLY",
-      "neodash_network_network": "main-lines-network",
       "neodash_yard_yardname_1": "TOLEDO MEGA TERMINAL",
+      "neodash_yard_yardnamestateab_1": "TOLEDO MEGA TERMINAL - OH",
+      "neodash_network_network": "double-stack-network",
+      "neodash_network_network_display": "double-stack-network",
       "neodash_yard_yardnamestateab_2": "GENTILLY - LA",
-      "neodash_yard_yardnamestateab_1": "TOLEDO MEGA TERMINAL - OH"
+      "neodash_yard_yardnamestateab_2_display": "GENTILLY - LA"
     },
     "disableRowLimiting": true,
-    "downloadImageEnabled": true
+    "downloadImageEnabled": true,
+    "theme": "dark"
   },
   "pages": [
     {
@@ -38,12 +41,53 @@
             "nodePositions": {},
             "hideSelections": true,
             "autorun": true,
-            "defaultRelColor": "#FF7500"
-          }
+            "defaultRelColor": "#FF7500",
+            "separateOverlappingMarkers": false
+          },
+          "id": "0ec23631-95f9-428f-afbe-25c8890423c8",
+          "schema": [
+            [
+              "Node",
+              "yardname",
+              "lng",
+              "centroid",
+              "rrowners",
+              "yardnamestateab",
+              "stfips",
+              "stateab",
+              "stcntyfips",
+              "cntyfips",
+              "lat",
+              "country",
+              "franodeid",
+              "bndry",
+              "ctyfips",
+              "state",
+              "fradistrct",
+              "objectid",
+              "stcyfips",
+              "nodepoint",
+              "passngr",
+              "passngrstn"
+            ],
+            [
+              "Yard",
+              "yardname",
+              "lng",
+              "centroid",
+              "rrowners",
+              "yardnamestateab",
+              "stfips",
+              "stateab",
+              "stcntyfips",
+              "cntyfips",
+              "lat"
+            ]
+          ]
         },
         {
           "title": "Start Yard",
-          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value,  n.`yardnamestateab` as display ORDER BY size(toString(value)) ASC LIMIT 5",
           "width": 3,
           "height": 1,
           "x": 9,
@@ -57,12 +101,14 @@
             "entityType": "Yard",
             "deduplicateSuggestions": false,
             "propertyType": "yardnamestateab",
-            "parameterName": "neodash_yard_yardnamestateab_1"
-          }
+            "parameterName": "neodash_yard_yardnamestateab_1",
+            "helperText": "yard name"
+          },
+          "id": "808fbad0-2823-4114-952e-72f17d622b26"
         },
         {
           "title": "End Yard",
-          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "query": "MATCH (n:`Yard`) \nWHERE toLower(toString(n.`yardnamestateab`)) CONTAINS toLower($input) \nRETURN  n.`yardnamestateab` as value,  n.`yardnamestateab` as display ORDER BY size(toString(value)) ASC LIMIT 5",
           "width": 3,
           "height": 1,
           "x": 9,
@@ -76,8 +122,10 @@
             "clearParameterOnFieldClear": true,
             "deduplicateSuggestions": false,
             "propertyType": "yardnamestateab",
-            "parameterName": "neodash_yard_yardnamestateab_2"
-          }
+            "parameterName": "neodash_yard_yardnamestateab_2",
+            "helperText": "yard name"
+          },
+          "id": "39d560d7-5c2f-4388-8126-d533586d564a"
         },
         {
           "title": "Shortest Path (Miles)",
@@ -88,7 +136,8 @@
           "y": 3,
           "type": "value",
           "selection": {},
-          "settings": {}
+          "settings": {},
+          "id": "787bf291-0a6b-48e6-b080-2f76e039b377"
         },
         {
           "title": "Trackage on Route",
@@ -103,11 +152,12 @@
             "value": "Miles",
             "key": "(none)"
           },
-          "settings": {}
+          "settings": {},
+          "id": "f55f4ae3-eeb7-4b42-bb3c-2beadee8cf09"
         },
         {
           "title": "Rail Road Owner",
-          "query": "MATCH (n:`Owner`) \nWHERE toLower(toString(n.`rrowner`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`rrowner` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "query": "MATCH (n:`Owner`) \nWHERE toLower(toString(n.`rrowner`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`rrowner` as value,  n.`rrowner` as display ORDER BY size(toString(value)) ASC LIMIT 5",
           "width": 3,
           "height": 1,
           "x": 9,
@@ -119,8 +169,10 @@
             "entityType": "Owner",
             "propertyType": "rrowner",
             "parameterName": "neodash_owner_rrowner",
-            "clearParameterOnFieldClear": true
-          }
+            "clearParameterOnFieldClear": true,
+            "helperText": "owner name"
+          },
+          "id": "23599a09-cd31-4496-82cd-2652e443cc4d"
         },
         {
           "title": "Trackage Table",
@@ -131,11 +183,12 @@
           "y": 4,
           "type": "table",
           "selection": {},
-          "settings": {}
+          "settings": {},
+          "id": "406fefeb-b036-49b4-9f45-c52cc2029a07"
         },
         {
           "title": "Network",
-          "query": "MATCH (n:`Network`) \nWHERE toLower(toString(n.`network`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`network` as value ORDER BY size(toString(value)) ASC LIMIT 5",
+          "query": "MATCH (n:`Network`) \nWHERE toLower(toString(n.`network`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`network` as value,  n.`network` as display ORDER BY size(toString(value)) ASC LIMIT 5",
           "width": 3,
           "height": 1,
           "x": 9,
@@ -144,11 +197,14 @@
           "selection": {},
           "settings": {
             "type": "Node Property",
+            "clearParameterOnFieldClear": true,
             "entityType": "Network",
             "propertyType": "network",
+            "propertyTypeDisplay": "network",
             "parameterName": "neodash_network_network",
-            "clearParameterOnFieldClear": true
-          }
+            "helperText": "main or double"
+          },
+          "id": "311c50a6-3867-45da-9b9c-2bba930e9caa"
         }
       ]
     },
@@ -171,7 +227,8 @@
             "nodeColorScheme": "set1",
             "defaultNodeSize": "small",
             "hideSelections": true
-          }
+          },
+          "id": "45be6e22-7f29-4027-b7e1-71d3a9784de2"
         },
         {
           "title": "",
@@ -187,14 +244,29 @@
             "entityType": "Network",
             "propertyType": "network",
             "parameterName": "neodash_network_network"
-          }
+          },
+          "id": "8cd61eed-5c1a-4800-8ec0-aefea7f76d98"
         }
       ]
     }
   ],
   "parameters": {},
   "extensions": {
-    "advanced-charts": true,
-    "styling": true
+    "advanced-charts": {
+      "active": true
+    },
+    "styling": {
+      "active": true
+    },
+    "active": true,
+    "activeReducers": [
+      "DASHBOARD/EXTENSIONS/QUERY_TRANSLATOR/"
+    ],
+    "actions": {
+      "active": true
+    },
+    "query-translator": {
+      "active": true
+    }
   }
 }

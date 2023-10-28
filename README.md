@@ -16,7 +16,7 @@ The NARN data dictionary is included in the repo for reference.
 
 1. [Neo4j Desktop](https://neo4j.com/download)
 
-2. Install Neo4j Enterprise Edition 5.1
+2. Install Neo4j Enterprise Edition 5.13
 
 3. Install APOC plugin from the Desktop
 
@@ -26,17 +26,19 @@ The NARN data dictionary is included in the repo for reference.
 
   * uncomment `server.directories.import=import`
 
-  * configure `server.memory.heap.initial_size=6g`
+  * configure `server.memory.heap.initial_size=4g`
 
-  * configure `server.memory.heap.max_size=6g`
+  * configure `server.memory.heap.max_size=4g`
 
   * configure `server.memory.pagecache.size=2g`
 
-6. Open the DBMS folder, copy the `apoc.conf` file to /conf
+6. Download and copy apoc-5.13.0-extended.jar from  https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/tag/5.13.0 to your Neo4j /plugins folder
 
-7. Restart Neo4j
+7. Open the DBMS folder, copy the `apoc.conf` file to /conf
 
-#### Build (for Neo4j 5)
+8. Restart Neo4j
+
+#### Build (for Neo4j 5.13)
 
 1. Download and copy data files to DBMS /import folder.  Pick the GeoJSON option, and within Download Options, pick the "Download file previously generated" option.
 
@@ -50,7 +52,7 @@ The NARN data dictionary is included in the repo for reference.
 
 Final database size will be ~600MB.
 
-Note that the `apoc.conf` file includes `apoc.initialize` statements to create graph projections on db start up.  These will fail until the graph database is built completely.  Once the graph is fully built, you can restart the db and the projections will generate automatically.  You can view these steps occurring in neo4j.log during startup.
+Note that the `apoc.conf` file includes `apoc.initialize` statements to create graph projections on db start up. These will fail until the graph database is built completely. Once the graph is fully built, you can uncomment these statements and restart the db and the projections will generate automatically.  You can view these steps occurring in neo4j.log during startup.
 
 If you don't like this behavior, you can always comment out the `apoc.initialize` commands and manually run the code in `gds-startup.cyp`.
 
