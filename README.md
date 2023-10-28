@@ -1,6 +1,5 @@
 # neo4j-na-rail-network
 ## North American Rail Network Pathfinding
-### with Neo4j 5 + GDS 2.2.3 + NeoDash 2.2.0
 
 #### Summary
 
