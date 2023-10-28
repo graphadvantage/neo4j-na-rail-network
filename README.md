@@ -56,7 +56,7 @@ Note that the `apoc.conf` file includes `apoc.initialize` statements to create g
 
 If you don't like this behavior, you can always comment out the `apoc.initialize` commands and manually run the code in `gds-startup.cyp`.
 
-#### NeoDash
+#### NeoDash 2.3.5
 
 The dashboard includes several reports.  Try using the 'main-lines-network' and 'TOLEDO MEGA TERMINAL - OH' and 'GENTILLY - LA' for start and end yards.
 
